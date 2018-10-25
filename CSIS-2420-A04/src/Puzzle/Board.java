@@ -39,7 +39,7 @@ public class Board {
 				}
 			}
 		}
-		// System.out.println("hamming: " + hamming);
+		//System.out.println("hamming: " + hamming);
 		return hamming;
 	}
 
@@ -152,7 +152,7 @@ public class Board {
 			neighborsStack.push(swap(row, col, row - 1, col));
 
 		}
-		if (row > N - 1) {
+		if (row < N - 1) {
 			neighborsStack.push(swap(row, col, row + 1, col));
 
 		}
@@ -160,7 +160,7 @@ public class Board {
 			neighborsStack.push(swap(row, col, row, col - 1));
 
 		}
-		if (col > N - 1) {
+		if (col < N - 1) {
 			neighborsStack.push(swap(row, col, row, col + 1));
 
 		}
@@ -169,10 +169,22 @@ public class Board {
 	}
 
 	private Board swap(int i, int j, int i1, int j1) {
+		int[][] tiles = deepCloneTiles();
+		
+		
 		int temp = tiles[i][j];
 		tiles[i][j] = tiles[i1][j1];
 		tiles[i1][j1] = temp;
 		return new Board(tiles);
+	}
+	
+	private int[][] deepCloneTiles()
+	{
+		int[][] tiles = new int[N][N];
+		for(int i = 0; i < N; i++)
+			System.arraycopy(this.tiles[i], 0, tiles[i], 0, N);
+		
+		return tiles;
 	}
 
 	// string representation of this board (in the output format specified below)
