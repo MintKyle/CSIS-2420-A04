@@ -49,8 +49,8 @@ public class Board {
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (tiles[i][j] != 0 && tiles[i][j] != N * i + j + 1) {
-					int row = (tiles[i][j] - 1) / N - i;
-					int col = (tiles[i][j] - 1) % N - j;
+					int row = Math.abs((tiles[i][j] - 1) / N - i);
+					int col = Math.abs((tiles[i][j] - 1) % N - j);
 					manhattan += row + col;
 				}
 			}
@@ -205,7 +205,7 @@ public class Board {
 
 		// create initial board from file
 		// In in = new In(args[0]);
-		In in = new In("ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle/puzzle17.txt");
+		In in = new In("ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle/puzzle36.txt");
 		int N = in.readInt();
 		int[][] blocks = new int[N][N];
 		for (int i = 0; i < N; i++) {
