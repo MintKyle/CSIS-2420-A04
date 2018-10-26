@@ -37,7 +37,10 @@ public class Solver {
     	BoardEntry fastest = null;
     	int traversed = 0;
     	
-    	main: while(!entries.isEmpty())
+    	if (initial.isGoal())
+    		fastest = entries.delMin();
+    	
+    	main: while(fastest == null && !entries.isEmpty())
     	{
     		Board prev;
     		BoardEntry entry = entries.delMin();
