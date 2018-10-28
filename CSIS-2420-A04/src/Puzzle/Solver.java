@@ -1,6 +1,7 @@
 package Puzzle;
 
 import java.util.Comparator;
+import java.util.HashMap;
 
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Stack;
@@ -40,29 +41,38 @@ public class Solver {
     	if (initial.isGoal())
     		fastest = entries.delMin();
     	
-    	main: while(fastest == null && !entries.isEmpty())
+    	HashMap<Board, Integer> checked = new HashMap<Board, Integer>();
+    	
+    	main: while(!entries.isEmpty())
     	{
-    		Board prev;
     		BoardEntry entry = entries.delMin();
-    		
-    		if (entry.prev != null)
-    			prev = entry.prev.board;
-    		else
-    			prev = null;
+    		if (fastest != null && entry.moves >= fastest.moves)
+    			continue;
     		
     		for(Board b : entry.board.neighbors())
     		{
     			traversed++;
-    			if (b.equals(prev))
-    				continue;
+    			if (traversed % 100 == 99)
+    				System.gc();
     			
-    			if (b.isGoal())
+    			if (checked.containsKey(b))
     			{
-    				fastest = new BoardEntry(b, entry);
-    				break main;
+    				if (checked.get(b) < entry.moves)
+    					checked.replace(b, entry.moves);
+    				else
+    					continue;
     			}
     			
-    			entries.insert(new BoardEntry(b, entry));
+    			if (fastest == null || entry.moves+1 < fastest.moves)
+    			{
+    				if (b.isGoal())
+    				{
+    					fastest = new BoardEntry(b, entry);
+    					break;
+    				}
+    				else
+    					entries.insert(new BoardEntry(b, entry));
+    			}
     		}
     	}
     	
@@ -74,14 +84,34 @@ public class Solver {
     		fastest = fastest.prev;
     	}
     	
-    	StdOut.println("Boards Checked: " + traversed);
+    	StdOut.println("Boards Checked: " + checked.size());
+    	StdOut.printf("Board Checking Rate: %.2f%%%n", (checked.size() * 100) / (double) traversed);
     	
     	return sequence;
     }
 
     public static void main(String[] args) // solve a slider puzzle (given below) 
     {
+    	String prefix = "ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle/";
+    	String[] puzzles = new String[] {
+			"puzzle28.txt",
+			"puzzle30.txt",
+			"puzzle32.txt",
+			"puzzle34.txt",
+			"puzzle36.txt",
+			"puzzle38.txt",
+			"puzzle40.txt",
+			"puzzle42.txt"
+    	};
     	
+    	for(String puzzle : puzzles)
+    	{
+    		long time = System.currentTimeMillis();
+    		Board.main(prefix + puzzle);
+    		time = System.currentTimeMillis() - time;
+    		
+    		System.out.printf("%s Time: %dms%n", puzzle, time);
+    	}
     }
     
     private class BoardEntry
