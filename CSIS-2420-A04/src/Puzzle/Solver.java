@@ -1,7 +1,6 @@
 package Puzzle;
 
 import java.util.Comparator;
-import java.util.HashMap;
 
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Stack;
@@ -41,13 +40,16 @@ public class Solver {
     	if (initial.isGoal())
     		fastest = entries.delMin();
     	
-    	HashMap<Board, Integer> checked = new HashMap<Board, Integer>();
+    	//HashMap<Board, Integer> checked = new HashMap<Board, Integer>();
     	
     	main: while(!entries.isEmpty())
     	{
     		BoardEntry entry = entries.delMin();
-    		if (fastest != null && entry.moves >= fastest.moves)
-    			continue;
+    		Board prev;
+    		if (entry.prev != null)
+    			prev = entry.prev.board;
+    		else
+    			prev = null;
     		
     		for(Board b : entry.board.neighbors())
     		{
@@ -55,24 +57,19 @@ public class Solver {
     			if (traversed % 100 == 99)
     				System.gc();
     			
-    			if (checked.containsKey(b))
-    			{
-    				if (checked.get(b) < entry.moves)
-    					checked.replace(b, entry.moves);
-    				else
-    					continue;
-    			}
+    			if (b.equals(prev))
+    				continue;
     			
-    			if (fastest == null || entry.moves+1 < fastest.moves)
-    			{
-    				if (b.isGoal())
-    				{
-    					fastest = new BoardEntry(b, entry);
-    					break;
-    				}
-    				else
-    					entries.insert(new BoardEntry(b, entry));
-    			}
+//    			if (fastest == null || entry.moves+1 < fastest.moves)
+//    			{
+				if (b.isGoal())
+				{
+					fastest = new BoardEntry(b, entry);
+					break main;
+				}
+				else
+					entries.insert(new BoardEntry(b, entry));
+//    			}
     		}
     	}
     	
@@ -84,8 +81,7 @@ public class Solver {
     		fastest = fastest.prev;
     	}
     	
-    	StdOut.println("Boards Checked: " + checked.size());
-    	StdOut.printf("Board Checking Rate: %.2f%%%n", (checked.size() * 100) / (double) traversed);
+    	StdOut.println("Boards Checked: " + traversed);
     	
     	return sequence;
     }

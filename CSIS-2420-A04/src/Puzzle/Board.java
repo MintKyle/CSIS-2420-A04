@@ -201,11 +201,15 @@ public class Board {
 	}
 
 	// unit tests (not graded)
-	public static void main(String[] args) {
+	public static void main(String... args) {
 
 		// create initial board from file
 		// In in = new In(args[0]);
-		In in = new In("ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle/puzzle36.txt");
+		In in;
+		if (args.length > 0)
+			in = new In(args[0]);
+		else
+			in = new In("ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle/puzzle36.txt");
 		int N = in.readInt();
 		int[][] blocks = new int[N][N];
 		for (int i = 0; i < N; i++) {
